@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Document</title>
+	<style>
+		.button {
+			width: 48px;
+			height: 48px;
+			cursor: pointer;
+		&:hover {
+			 fill: white;
+		 }
+		}
+		
+		.defs {
+			position: absolute;
+			top: -9999px;
+			left: -9999px;
+		}
+		
+		iframe {
+			float: left;
+			width: 300px;
+			height: 200px;
+		}
+		
+		.buttons {
+			padding: 1rem;
+			background: #f06d06;
+			float: left;
+		}
+		
+		body {
+			padding: 1rem;
+		}
+	</style>
+</head>
+<body>
+<h1>Pause / Play Buttons for YouTube Videos</h1>
+
+<!-- Make sure ?enablejsapi=1 is on URL -->
+<iframe id="video" src="//www.youtube.com/embed/FKWwdQu6_ok?enablejsapi=1&html5=1" frameborder="0" allowfullscreen></iframe>
+
+
+<button id="play-button">Play</button>
+<button id="pause-button">Pause</button>
+
+<div id="elementToHide">Hola</div>
+
+
+<script>
+	// https://developers.google.com/youtube/iframe_api_reference
+
+	// global variable for the player
+	var player;
+	
+	// element to hide
+	var targetElement = document.getElementById('elementToHide');
+	
+
+	// this function gets called when API is ready to use
+	// PlayerAPI
+	// function onYouTubePlayerAPIReady() {
+	// 	// create the global player from the specific iframe (#video)
+	// 	player = new YT.Player('video', {
+	// 		events: {
+	// 			// call this function when player is ready to use
+	// 			'onReady': onPlayerReady,
+	// 			'onStateChange': onPlayerStateChange,
+	// 		}
+	// 	});
+	// }
+
+	//FKWwdQu6_ok
+	// IFrameAPI
+	// will execute as soon as the player API code downloads.
+	
+	function onYouTubeIframeAPIReady() {
+		// create the global player from the specific iframe (#video)
+		player = new YT.Player('video', {
+			videoId: 'FKWwdQu6_ok',
+			height: '390',
+			width: '640',
+			events: {
+				// call this function when player is ready to use
+				'onReady': onPlayerReady,
+				'onStateChange': onPlayerStateChange,
+			}
+		});
+	}
+	
+	
+	
+	function onPlayerReady(event) {
+
+		// bind events
+		var playButton = document.getElementById("play-button");
+		playButton.addEventListener("click", function() {
+			player.playVideo();
+		});
+
+		var pauseButton = document.getElementById("pause-button");
+		pauseButton.addEventListener("click", function() {
+			player.pauseVideo();
+		});
+
+	}
+	
+	
+	// when video changes state run this function
+	function onPlayerStateChange(event) {
+		
+		/*
+		List of states
+		
+		-1 (unstarted)
+		0 (ended)
+		1 (playing)
+		2 (paused)
+		3 (buffering)
+		5 (video cued)
+		 */
+		
+		
+		if(event.data == -1 || event.data == 0 || event.data == 2){
+			targetElement.style.display = 'block';
+			console.log('show');
+		} else{
+			targetElement.style.display = 'none';
+			console.log('hide');
+		}
+		
+	}
+	
+	
+	
+	
+	// CODE to Inject YouTube API script
+	var tag = document.createElement('script');
+	
+	//tag.src = "//www.youtube.com/player_api"; //Player API needs id from
+	tag.src = "https://www.youtube.com/iframe_api"; //iframe API needs video id
+	
+	var firstScriptTag = document.getElementsByTagName('script')[0];
+	firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+</script>
+</body>
+</html>
